@@ -32,6 +32,10 @@ Good triggers:
 - `/sail Fix the failing search empty-state test`
 - `Use Telltale M1 on this bug report`
 - `Map the work into islands and verify each one`
+- `출항`
+- `출항이다`
+- `이 작업 출항하자`
+- `sail this`
 
 Do not use this skill for simple questions, one-line edits, or tasks where the user explicitly wants direct execution without Telltale's mapping and inspection overhead.
 

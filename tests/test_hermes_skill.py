@@ -56,6 +56,8 @@ class HermesSkillTests(unittest.TestCase):
             "Sailor | `delegate_task`",
             "Inspector | Separate `delegate_task`",
             "Claude Code marketplace command remains `/telltale:sail`",
+            "`출항`",
+            "`출항이다`",
         ]:
             self.assertIn(phrase, text)
 
