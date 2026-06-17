@@ -1,0 +1,21 @@
+{
+  "name": "telltale",
+  "description": "Cost-aware island convergence for Claude Code work.",
+  "version": "0.0.1",
+  "author": {
+    "name": "MTGVim"
+  },
+  "homepage": "https://github.com/MTGVim/telltale",
+  "repository": "https://github.com/MTGVim/telltale",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "plugin",
+    "convergence",
+    "agent",
+    "workflow"
+  ],
+  "commands": [
+    "./commands/sail.md"
+  ]
+}
