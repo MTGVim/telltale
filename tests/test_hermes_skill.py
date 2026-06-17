@@ -1,0 +1,71 @@
+import re
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+SKILL = ROOT / "hermes" / "skills" / "sail" / "SKILL.md"
+
+
+def parse_frontmatter(text: str):
+    assert text.startswith("---\n")
+    end = text.find("\n---\n", 4)
+    assert end != -1
+    raw = text[4:end]
+    data = {}
+    for line in raw.splitlines():
+        if not line.strip() or line.startswith(" "):
+            continue
+        if ":" in line:
+            key, value = line.split(":", 1)
+            data[key.strip()] = value.strip().strip('"')
+    return data
+
+
+def hermes_skill_command_slug(name: str) -> str:
+    slug = name.lower().replace(" ", "-").replace("_", "-")
+    slug = re.sub(r"[^a-z0-9-]", "", slug)
+    slug = re.sub(r"-{2,}", "-", slug).strip("-")
+    return f"/{slug}"
+
+
+class HermesSkillTests(unittest.TestCase):
+    def test_skill_frontmatter_exposes_sail_command(self):
+        text = SKILL.read_text(encoding="utf-8")
+        frontmatter = parse_frontmatter(text)
+        self.assertEqual(frontmatter["name"], "sail")
+        self.assertEqual(hermes_skill_command_slug(frontmatter["name"]), "/sail")
+        self.assertLessEqual(len(frontmatter["description"]), 60)
+        self.assertTrue(frontmatter["description"].endswith("."))
+
+    def test_skill_ships_helper_and_references(self):
+        skill_dir = SKILL.parent
+        required = [
+            skill_dir / "scripts" / "telltalectl.py",
+            skill_dir / "references" / "RFC_TELLTALE_M1.md",
+            skill_dir / "references" / "HERMES_IMPLEMENTATION_BRIEF.md",
+            skill_dir / "references" / "phase-docs.md",
+        ]
+        for path in required:
+            self.assertTrue(path.exists(), f"missing {path}")
+
+    def test_skill_documents_role_mapping_and_boundaries(self):
+        text = SKILL.read_text(encoding="utf-8")
+        for phrase in [
+            "Orchestrator | Main Hermes agent",
+            "Cartographer | `delegate_task`",
+            "Sailor | `delegate_task`",
+            "Inspector | Separate `delegate_task`",
+            "Claude Code marketplace command remains `/telltale:sail`",
+        ]:
+            self.assertIn(phrase, text)
+
+    def test_claude_code_local_sail_alias_exists(self):
+        alias = ROOT / ".claude" / "commands" / "sail.md"
+        text = alias.read_text(encoding="utf-8")
+        self.assertIn("# /sail", text)
+        self.assertIn("/telltale:sail", text)
+        self.assertIn("$ARGUMENTS", text)
+
+
+if __name__ == "__main__":
+    unittest.main()

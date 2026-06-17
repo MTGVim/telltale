@@ -47,7 +47,17 @@ Telltale exposes exactly one public command:
 /telltale:sail <task, SOT, bug report, failing log, or goal>
 ```
 
-There is no public `/telltale:converge` command in 0.0.1. Convergence is the technical concept; `sail` is the user-facing command.
+There is no public `/telltale:converge` command. Convergence is the technical concept; `sail` is the user-facing command.
+
+## Command matrix
+
+| Environment | Command |
+|---|---|
+| Claude Code marketplace plugin | `/telltale:sail <task>` |
+| Claude Code local checkout alias | `/sail <task>` |
+| Hermes Agent skill command | `/sail <task>` |
+
+The short `/sail` alias is included for local Claude Code development and Hermes usage so typing `/sail` appears naturally in slash-command completion. The marketplace-safe Claude Code command remains namespaced as `/telltale:sail`.
 
 ## Usage
 
@@ -67,10 +77,11 @@ cd telltale
 claude --plugin-dir .
 ```
 
-Then run inside Claude Code:
+Then run inside Claude Code. The canonical plugin command is namespaced, and the local checkout also provides the short alias:
 
 ```text
 /telltale:sail <task>
+/sail <task>
 ```
 
 Local validation:
@@ -108,6 +119,37 @@ This was verified against Claude Code 2.1.150 in an isolated HOME. A plain Git U
 /plugin marketplace add https://github.com/MTGVim/telltale.git
 ```
 
+
+## Hermes Agent install
+
+Telltale 0.0.2 adds a Hermes-native skill surface. Hermes automatically exposes installed skills as slash commands, so the skill name `sail` becomes:
+
+```text
+/sail <task, SOT, bug report, failing log, or goal>
+```
+
+From a checkout of this repository, install or inspect the skill from:
+
+```text
+hermes/skills/sail/SKILL.md
+```
+
+For local development, copy or symlink that directory into your active Hermes profile's skills directory, then start a fresh Hermes session so command discovery can rescan skills:
+
+```bash
+mkdir -p "${HERMES_HOME:-$HOME/.hermes}/skills"
+ln -sfn "$(pwd)/hermes/skills/sail" "${HERMES_HOME:-$HOME/.hermes}/skills/sail"
+hermes -s sail
+```
+
+Then use:
+
+```text
+/sail Fix the search empty state bug and verify it.
+```
+
+This is native Hermes skill-command support, not a Hermes core slash-command patch. The same short `/sail` spelling is also available as a Claude Code local checkout alias; the Claude Code marketplace command remains `/telltale:sail`.
+
 ## Troubleshooting
 
 ### Claude Code version too old
@@ -119,7 +161,7 @@ claude --version
 claude update
 ```
 
-Telltale 0.0.1 was validated with Claude Code 2.1.150.
+Telltale 0.0.2 was validated with Claude Code 2.1.150 and Hermes skill discovery from the repository checkout.
 
 ### `/plugin` command missing
 
@@ -153,7 +195,7 @@ If needed, remove and re-add the marketplace source.
 
 ## M1 scope
 
-Included in 0.0.1:
+Included in 0.0.2:
 
 - Claude Code plugin manifest;
 - `/telltale:sail` command;
@@ -162,11 +204,13 @@ Included in 0.0.1:
 - JSON schemas for destination, island, island scorecard, event, route, report, and state;
 - deterministic `scripts/telltalectl.py` helper;
 - schema, event trace, state, report, and smoke validation;
-- hero image and public README.
+- hero image and public README;
+- Hermes Agent skill command support via `hermes/skills/sail` and `/sail`;
+- Claude Code local checkout alias via `.claude/commands/sail.md` and `/sail`.
 
 ## Non-goals
 
-Telltale 0.0.1 does not implement:
+Telltale 0.0.2 does not implement:
 
 - meta-feedback;
 - loop-memory or cross-run learning;
@@ -182,6 +226,7 @@ Telltale 0.0.1 does not implement:
 .claude-plugin/plugin.json       # Claude Code plugin manifest
 .claude-plugin/marketplace.json  # repo-local marketplace manifest
 commands/sail.md                 # public /telltale:sail command
+.claude/commands/sail.md         # Claude Code local /sail alias
 agents/                          # Telltale subagents
 internal/                        # M1 phase docs
 schemas/                         # JSON schemas
@@ -190,6 +235,7 @@ assets/telltale-hero-monochrome.png
 README.md
 README.ko.md
 docs/
+hermes/skills/sail/              # Hermes /sail skill support
 tests/
 ```
 
