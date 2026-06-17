@@ -28,7 +28,7 @@ Create or update:
 
 ```txt
 .claude-plugin/plugin.json
-commands/sail.md
+commands/telltale-sail.md
 agents/telltale-cartographer.md
 agents/telltale-sailor.md
 agents/telltale-inspector.md

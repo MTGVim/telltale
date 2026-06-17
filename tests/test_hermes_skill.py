@@ -4,6 +4,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / "hermes" / "skills" / "sail" / "SKILL.md"
+CLAUDE_SKILL = ROOT / "skills" / "sail" / "SKILL.md"
 
 
 def parse_frontmatter(text: str):
@@ -67,6 +68,16 @@ class HermesSkillTests(unittest.TestCase):
         self.assertIn("# /sail", text)
         self.assertIn("/telltale:sail", text)
         self.assertIn("$ARGUMENTS", text)
+
+    def test_claude_code_installed_sail_skill_exists(self):
+        text = CLAUDE_SKILL.read_text(encoding="utf-8")
+        frontmatter = parse_frontmatter(text)
+        self.assertEqual(frontmatter["name"], "sail")
+        self.assertLessEqual(len(frontmatter["description"]), 60)
+        self.assertIn("/sail <task", text)
+        self.assertIn("/telltale:sail", text)
+        self.assertIn("@telltale-cartographer", text)
+        self.assertIn("`출항`", text)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 ---
+name: telltale:sail
 description: Run Telltale's cost-aware island convergence loop.
 argument-hint: "<task, SOT, bug report, failing log, or goal>"
 ---
