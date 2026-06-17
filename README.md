@@ -89,25 +89,23 @@ This repository includes `.claude-plugin/marketplace.json`, so users can add the
 Inside Claude Code:
 
 ```text
-/plugin marketplace add github:MTGVim/telltale
+/plugin marketplace add MTGVim/telltale
 /plugin install telltale@telltale
 /reload-plugins
 /telltale:sail <task>
 ```
 
-If your Claude Code build expects a plain GitHub repo source instead of the `github:` shorthand, use:
-
-```text
-/plugin marketplace add https://github.com/MTGVim/telltale.git
-/plugin install telltale@telltale
-/reload-plugins
-```
-
 The local command equivalent is:
 
 ```bash
-claude plugin marketplace add github:MTGVim/telltale
+claude plugin marketplace add MTGVim/telltale
 claude plugin install telltale@telltale
+```
+
+This was verified against Claude Code 2.1.150 in an isolated HOME. A plain Git URL also works for adding the marketplace:
+
+```text
+/plugin marketplace add https://github.com/MTGVim/telltale.git
 ```
 
 ## Troubleshooting

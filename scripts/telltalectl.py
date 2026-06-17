@@ -443,11 +443,12 @@ def _first_payload_value(events: Iterable[Mapping[str, Any]], event_name: str, k
 
 def cmd_smoke(args: argparse.Namespace) -> None:
     cmd_validate_schemas(args)
-    key = f"smoke-{dt.datetime.now().strftime('%Y%m%d-%H%M%S')}"
+    stamp = dt.datetime.now().strftime('%Y%m%d-%H%M%S-%f')
+    key = f"smoke-{stamp}-{os.getpid()}"
     bd = branch_dir(key)
     if bd.exists():
         raise SystemExit(f"Smoke branch already exists: {bd}")
-    run_id = f"tt-smoke-{dt.datetime.now().strftime('%Y%m%d-%H%M%S')}"
+    run_id = f"tt-smoke-{stamp}"
     append_event({"event": "run_started", "run_id": run_id, "payload": {"input_source": "smoke"}}, key)
     append_event({"event": "loop_authority_claimed", "run_id": run_id, "payload": {"branch_key": key}}, key)
     append_event({"event": "destination_extracted", "run_id": run_id, "payload": {"destination": sample_destination()}}, key)
