@@ -183,7 +183,7 @@ OK   public command found: /telltale:sail
 OK   local alias found: /sail
 OK   Hermes skill found: hermes/skills/sail
 OK   generated state is gitignored
-OK   versions match: 0.0.9
+OK   versions match: 0.0.10
 
 Result: healthy
 ```
