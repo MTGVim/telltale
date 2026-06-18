@@ -17,9 +17,11 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Optional
 
-ROOT = Path.cwd()
-STATE_ROOT = ROOT / ".claude" / "telltale"
-SCHEMA_ROOT = ROOT / "schemas"
+PROJECT_ROOT = Path.cwd().resolve()
+PKG_ROOT = Path(__file__).resolve().parents[1]
+STATE_BASE = Path(os.environ.get("TELLTALE_STATE_ROOT", PROJECT_ROOT)).resolve()
+STATE_ROOT = STATE_BASE / ".claude" / "telltale"
+SCHEMA_ROOT = PKG_ROOT / "schemas"
 
 REQUIRED_SCHEMA_FILES = {
     "destination": "destination.schema.json",
@@ -74,7 +76,9 @@ def now_iso() -> str:
 def branch_key() -> str:
     try:
         name = subprocess.check_output(
-            ["git", "branch", "--show-current"], text=True, stderr=subprocess.DEVNULL
+            ["git", "-C", str(PROJECT_ROOT), "branch", "--show-current"],
+            text=True,
+            stderr=subprocess.DEVNULL,
         ).strip()
     except Exception:
         name = "detached"

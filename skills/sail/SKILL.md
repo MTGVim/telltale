@@ -1,7 +1,7 @@
 ---
 name: sail
 description: Use when sailing toward a Telltale M1 goal.
-version: 0.0.3
+version: 0.0.4
 author: MTGVim
 license: MIT
 ---

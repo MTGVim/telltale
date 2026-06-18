@@ -122,7 +122,7 @@ This was verified against Claude Code 2.1.150 in an isolated HOME. A plain Git U
 
 ## Hermes Agent install
 
-Telltale 0.0.3 adds a Hermes-native skill surface. Hermes automatically exposes installed skills as slash commands, so the skill name `sail` becomes:
+Telltale 0.0.4 adds a Hermes-native skill surface. Hermes automatically exposes installed skills as slash commands, so the skill name `sail` becomes:
 
 ```text
 /sail <task, SOT, bug report, failing log, or goal>
@@ -161,7 +161,7 @@ claude --version
 claude update
 ```
 
-Telltale 0.0.3 was validated with Claude Code 2.1.150 and Hermes skill discovery from the repository checkout.
+Telltale 0.0.4 was validated with Claude Code 2.1.150 and Hermes skill discovery from the repository checkout.
 
 ### `/plugin` command missing
 
@@ -195,7 +195,7 @@ If needed, remove and re-add the marketplace source.
 
 ## M1 scope
 
-Included in 0.0.3:
+Included in 0.0.4:
 
 - Claude Code plugin manifest;
 - `/telltale:sail` command and installed Claude Code `/sail` skill;
@@ -210,7 +210,7 @@ Included in 0.0.3:
 
 ## Non-goals
 
-Telltale 0.0.3 does not implement:
+Telltale 0.0.4 does not implement:
 
 - meta-feedback;
 - loop-memory or cross-run learning;
