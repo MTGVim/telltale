@@ -412,37 +412,38 @@ def cmd_write_report(args: argparse.Namespace) -> None:
     (report_dir / "convergence-report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     reached_islands = report["reached_islands"]
     reached_count = len(reached_islands)
-    last_reached = reached_islands[-1] if reached_islands else "none"
-    current_island = state.get("current_island") or "none"
-    if args.result == "SUCCESS":
-        sailing_status = "completed"
-    elif args.result == "PARTIAL":
-        sailing_status = "partial"
-    elif args.result == "BLOCKED":
-        sailing_status = "blocked"
-    elif args.result == "ABORTED":
-        sailing_status = "aborted"
-    else:
-        sailing_status = "max-iterations"
+    no_value = "없음"
+    last_reached = reached_islands[-1] if reached_islands else no_value
+    current_island = state.get("current_island") or no_value
+    status_labels = {
+        "SUCCESS": "완료",
+        "PARTIAL": "부분 완료",
+        "BLOCKED": "막힘",
+        "ABORTED": "중단",
+        "MAX_ITERATIONS": "반복 한도 도달",
+    }
+    sailing_status = status_labels.get(args.result, args.result)
+    reached_list = ", ".join(reached_islands) if reached_islands else no_value
+    next_island = args.next_recommended_island or no_value
     markdown = [
-        "# 🧭 Telltale Convergence Report",
+        "# 🧭 Telltale 수렴 보고서",
         "",
-        f"- 🟢 Result: {args.result}",
-        f"- 🎯 Destination: {destination}",
-        f"- 🏝️ Reached islands: {', '.join(reached_islands) if reached_islands else 'none'}",
-        f"- 🧭 Next recommended island: {args.next_recommended_island or 'none'}",
+        f"- 🟢 결과: {args.result} ({sailing_status})",
+        f"- 🎯 목표: {destination}",
+        f"- 🏝️ 도착한 섬: {reached_list}",
+        f"- 🧭 다음 추천 섬: {next_island}",
         "",
-        "## 🗺️ Route Progress",
-        f"- 🏝️ Islands reached: {reached_count}",
-        f"- ⛵ Sailing status: {sailing_status}",
-        f"- 🧭 Current island: {current_island}",
-        f"- ✅ Last island reached: {last_reached}",
-        f"- 🎮 Progress HUD: 🏝️ {reached_count} reached · ⛵ {sailing_status} · ✅ {last_reached}",
+        "## 🗺️ 항해 진행",
+        f"- 🏝️ 도착한 섬 수: {reached_count}",
+        f"- ⛵ 항해 상태: {sailing_status}",
+        f"- 🧭 현재 섬: {current_island}",
+        f"- ✅ 마지막 도착 섬: {last_reached}",
+        f"- 🎮 진행 HUD: 🏝️ {reached_count}개 섬 도착 · ⛵ {sailing_status} · ✅ {last_reached}",
         "",
-        "## Summary",
-        args.summary or "No summary provided.",
+        "## 요약",
+        args.summary or "요약 없음.",
         "",
-        "## Event count",
+        "## 이벤트 수",
         str(len(events)),
         "",
     ]
@@ -491,7 +492,7 @@ def cmd_smoke(args: argparse.Namespace) -> None:
     append_event({"event": "island_reached", "run_id": run_id, "island_id": selected["id"], "payload": {"island_id": selected["id"]}}, key)
     append_event({"event": "verified_route_recorded", "run_id": run_id, "island_id": selected["id"], "payload": {"route": sample_route(selected["id"])}}, key)
     reduce_state(argparse.Namespace(branch=key))
-    cmd_write_report(argparse.Namespace(branch=key, result="SUCCESS", destination="Smoke destination", next_recommended_island="", summary="Smoke run completed."))
+    cmd_write_report(argparse.Namespace(branch=key, result="SUCCESS", destination="Smoke destination", next_recommended_island="", summary="스모크 실행 완료."))
     cmd_validate_trace(argparse.Namespace(branch=key, file=None, require_close=True))
     print(f"ok: smoke branch {key}")
 

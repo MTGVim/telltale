@@ -136,10 +136,21 @@ class TelltaleCtlTests(unittest.TestCase):
         state_json = json.loads(state.read_text())
         self.assertEqual(state_json["status"], "SUCCESS")
         report_text = report.read_text(encoding="utf-8")
-        self.assertIn("## 🗺️ Route Progress", report_text)
-        self.assertIn("- 🏝️ Islands reached: 1", report_text)
-        self.assertIn("- ✅ Last island reached: island-smoke", report_text)
-        self.assertIn("- ⛵ Sailing status: completed", report_text)
+        self.assertIn("## 🗺️ 항해 진행", report_text)
+        self.assertIn("- 🏝️ 도착한 섬 수: 1", report_text)
+        self.assertIn("- ✅ 마지막 도착 섬: island-smoke", report_text)
+        self.assertIn("- ⛵ 항해 상태: 완료", report_text)
+        self.assertIn("- 🎮 진행 HUD: 🏝️ 1개 섬 도착 · ⛵ 완료 · ✅ island-smoke", report_text)
+        for english_label in [
+            "Route Progress",
+            "Islands reached",
+            "Last island reached",
+            "Sailing status",
+            "Progress HUD",
+            "completed",
+            "none",
+        ]:
+            self.assertNotIn(english_label, report_text)
         closed = self.run_ctl("validate-trace", "--file", str(trace), "--require-close")
         self.assertIn("ok:", closed.stdout)
 

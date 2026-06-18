@@ -79,13 +79,26 @@ class HermesSkillTests(unittest.TestCase):
         self.assertIn("@telltale-cartographer", text)
         self.assertIn("`출항`", text)
 
-    def test_sail_skills_document_emoji_route_progress(self):
+    def test_sail_skills_document_korean_emoji_route_progress(self):
         for path in [CLAUDE_SKILL, SKILL]:
             text = path.read_text(encoding="utf-8")
-            self.assertIn("🧭 Route", text)
-            self.assertIn("🏝️", text)
-            self.assertIn("⛵", text)
-            self.assertIn("✅", text)
+            self.assertIn("## 🧭 한글 항해 진행 HUD", text)
+            progress_section = text.split("## 🧭 한글 항해 진행 HUD", 1)[1].split("## Pitfalls", 1)[0]
+            self.assertIn("🧭 항해", progress_section)
+            self.assertIn("도착", progress_section)
+            self.assertIn("항해 중", progress_section)
+            self.assertIn("마지막 도착", progress_section)
+            self.assertIn("🏝️", progress_section)
+            self.assertIn("⛵", progress_section)
+            self.assertIn("✅", progress_section)
+            for english_label in [
+                "🧭 Route",
+                "reached",
+                "sailing:",
+                "last island",
+                "Emoji Route Progress",
+            ]:
+                self.assertNotIn(english_label, progress_section)
 
 
 if __name__ == "__main__":

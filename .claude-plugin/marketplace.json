@@ -10,7 +10,7 @@
     {
       "name": "telltale",
       "description": "Cost-aware island convergence for Claude Code work.",
-      "version": "0.0.7",
+      "version": "0.0.8",
       "source": "./",
       "author": {
         "name": "MTGVim"

@@ -81,7 +81,7 @@ For a concrete miniature run, see [`docs/examples/fix-failing-test.md`](docs/exa
 Telltale user-facing progress uses a compact route HUD, for example:
 
 ```text
-🧭 Route: 🏝️ 2/4 reached · ⛵ sailing: island-render-empty-state · ✅ last island: island-test-log · 🎯 RUNNING
+🧭 항해: 🏝️ 2/4 도착 · ⛵ 항해 중: island-render-empty-state · ✅ 마지막 도착: island-test-log · 🎯 RUNNING
 ```
 
 ## Claude Code local development install
@@ -183,7 +183,7 @@ OK   public command found: /telltale:sail
 OK   local alias found: /sail
 OK   Hermes skill found: hermes/skills/sail
 OK   generated state is gitignored
-OK   versions match: 0.0.7
+OK   versions match: 0.0.8
 
 Result: healthy
 ```
