@@ -1,6 +1,6 @@
 {
   "name": "telltale",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": false,
   "description": "Cost-aware island convergence for Claude Code work.",
   "license": "MIT",
@@ -9,6 +9,6 @@
     "url": "git+https://github.com/MTGVim/telltale.git"
   },
   "scripts": {
-    "validate": "claude plugin validate . --strict && python3 scripts/telltalectl.py validate-schemas && python3 scripts/telltalectl.py smoke && python3 -m unittest discover -s tests -v"
+    "validate": "claude plugin validate . --strict && python3 scripts/telltalectl.py validate-schemas && python3 scripts/telltalectl.py smoke && python3 scripts/telltalectl.py doctor && python3 -m unittest discover -s tests -v"
   }
 }
