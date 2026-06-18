@@ -10,7 +10,7 @@ Telltale is a Claude Code plugin for cost-aware island convergence. It helps lon
 Win small, or learn cheap.
 ```
 
-Current release: `0.0.6`.
+Current release: `0.0.7`.
 
 ## When to use
 
@@ -78,6 +78,12 @@ Generated state is branch-local and lives under `.claude/telltale/`. It is inten
 
 For a concrete miniature run, see [`docs/examples/fix-failing-test.md`](docs/examples/fix-failing-test.md).
 
+Telltale user-facing progress uses a compact route HUD, for example:
+
+```text
+🧭 Route: 🏝️ 2/4 reached · ⛵ sailing: island-render-empty-state · ✅ last island: island-test-log · 🎯 RUNNING
+```
+
 ## Claude Code local development install
 
 ```bash
@@ -130,7 +136,7 @@ A plain Git URL also works for adding the marketplace:
 
 ## Hermes Agent install
 
-Telltale 0.0.6 includes a Hermes-native skill surface. Hermes automatically exposes installed skills as slash commands, so the skill name `sail` becomes:
+Telltale 0.0.7 includes a Hermes-native skill surface. Hermes automatically exposes installed skills as slash commands, so the skill name `sail` becomes:
 
 ```text
 /sail <task, SOT, bug report, failing log, or goal>
@@ -177,7 +183,7 @@ OK   public command found: /telltale:sail
 OK   local alias found: /sail
 OK   Hermes skill found: hermes/skills/sail
 OK   generated state is gitignored
-OK   versions match: 0.0.6
+OK   versions match: 0.0.7
 
 Result: healthy
 ```
@@ -193,7 +199,7 @@ claude --version
 claude update
 ```
 
-Telltale 0.0.6 was validated with Claude Code 2.1.150 and Hermes skill discovery from the repository checkout.
+Telltale 0.0.7 was validated with Claude Code 2.1.150 and Hermes skill discovery from the repository checkout.
 
 ### `/plugin` command missing
 
@@ -252,7 +258,7 @@ If needed, remove and re-add the marketplace source.
 
 ## M1 scope
 
-Included in 0.0.6:
+Included in 0.0.7:
 
 - Claude Code plugin manifest;
 - `/telltale:sail` command and installed Claude Code `/sail` skill;
@@ -268,7 +274,7 @@ Included in 0.0.6:
 
 ## Non-goals
 
-Telltale 0.0.6 does not implement:
+Telltale 0.0.7 does not implement:
 
 - meta-feedback;
 - loop-memory or cross-run learning;

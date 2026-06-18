@@ -1,7 +1,7 @@
 ---
 name: sail
 description: Use when sailing toward a Telltale M1 goal.
-version: 0.0.6
+version: 0.0.7
 author: MTGVim
 license: MIT
 ---
@@ -102,6 +102,36 @@ State paths:
 9. **Close, retry, re-chart, block, abort, or continue.** Close only with verification or an explicit recorded exception. On close, record a verified route segment.
 
 10. **Write the report.** End with one status: `SUCCESS`, `PARTIAL`, `BLOCKED`, `ABORTED`, or `MAX_ITERATIONS`.
+
+## Emoji Route Progress
+
+User-facing `/sail` progress should use a compact route HUD whenever reporting mapping, current-island execution, island close, re-chart, block, abort, or final report status. Keep machine-readable event names and status codes unchanged, but make the human progress line visually scannable:
+
+```text
+🧭 Route: 🏝️ <reached>/<mapped-or-?> reached · ⛵ sailing: <current-island|none> · ✅ last island: <last-reached|none> · 🎯 <SUCCESS|PARTIAL|BLOCKED|ABORTED|MAX_ITERATIONS|RUNNING>
+```
+
+Recommended glyphs:
+
+| Glyph | Meaning |
+|---|---|
+| 🧭 | route / orchestration / next direction |
+| 🗺️ | island map / route progress section |
+| 🏝️ | island count or reached island |
+| ⛵ | currently sailing / current island execution |
+| ✅ | island closed or final destination reached |
+| 🧪 | verification evidence |
+| 🚧 | blocked or needs input |
+| 🔁 | re-chart / retry |
+| 🛑 | abort / safety stop |
+
+Examples:
+
+```text
+🧭 Route: 🏝️ 0/3 reached · ⛵ sailing: island-test-log · ✅ last island: none · 🎯 RUNNING
+🧭 Route: 🏝️ 1/3 reached · ⛵ sailing: island-render-empty-state · ✅ last island: island-test-log · 🎯 RUNNING
+🧭 Route: 🏝️ 3/3 reached · ⛵ sailing: none · ✅ last island: island-final-verify · 🎯 SUCCESS
+```
 
 ## Pitfalls
 

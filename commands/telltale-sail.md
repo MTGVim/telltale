@@ -73,6 +73,16 @@ The event trace is the source of truth. `state.json` is derived from the event t
 14. Repeat until destination reached or a termination condition fires.
 15. Write final report and append `convergence_report_written` and `loop_authority_released`.
 
+## User-facing progress HUD
+
+When reporting progress to the user, include a compact emoji route HUD. Keep event names and status codes unchanged in traces, but make human progress visually scannable:
+
+```text
+🧭 Route: 🏝️ <reached>/<mapped-or-?> reached · ⛵ sailing: <current-island|none> · ✅ last island: <last-reached|none> · 🎯 <status>
+```
+
+Use the HUD after mapping, when starting an island, when closing an island, when re-charting, and in the final report summary.
+
 ## Budgets
 
 Default M1 budgets:

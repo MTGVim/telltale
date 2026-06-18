@@ -79,6 +79,14 @@ class HermesSkillTests(unittest.TestCase):
         self.assertIn("@telltale-cartographer", text)
         self.assertIn("`출항`", text)
 
+    def test_sail_skills_document_emoji_route_progress(self):
+        for path in [CLAUDE_SKILL, SKILL]:
+            text = path.read_text(encoding="utf-8")
+            self.assertIn("🧭 Route", text)
+            self.assertIn("🏝️", text)
+            self.assertIn("⛵", text)
+            self.assertIn("✅", text)
+
 
 if __name__ == "__main__":
     unittest.main()
