@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Telltale Verified Route Segment",
+  "type": "object",
+  "required": [
+    "from_island",
+    "facts",
+    "decisions",
+    "constraints",
+    "passed_checks"
+  ],
+  "properties": {
+    "from_island": {
+      "type": "string"
+    },
+    "facts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "passed_checks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "deferred_signals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rejected_signals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
