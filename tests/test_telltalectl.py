@@ -71,6 +71,31 @@ class TelltaleCtlTests(unittest.TestCase):
             selected = json.loads(result.stdout)
             self.assertEqual(selected["id"], "cheap")
 
+
+    def test_init_run_uses_packaged_schemas_from_external_project_cwd(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp) / "consumer-project"
+            project.mkdir()
+            subprocess.run(["git", "init", "-b", "consumer-branch"], cwd=project, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+            result = self.run_ctl("init-run", "--input-source", "user_prompt", cwd=project)
+
+            self.assertRegex(result.stdout.strip(), r"^tt-\d{8}-\d{6}$")
+            trace = project / ".claude" / "telltale" / "branches" / "consumer-branch" / "event-trace.jsonl"
+            state = project / ".claude" / "telltale" / "branches" / "consumer-branch" / "state.json"
+            self.assertTrue(trace.exists())
+            self.assertTrue(state.exists())
+
+    def test_branch_key_uses_external_project_cwd(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp) / "consumer-project"
+            project.mkdir()
+            subprocess.run(["git", "init", "-b", "consumer-branch"], cwd=project, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+            result = self.run_ctl("branch-key", cwd=project)
+
+            self.assertEqual(result.stdout.strip(), "consumer-branch")
+
     def test_smoke_creates_closed_trace_and_report(self):
         result = self.run_ctl("smoke")
         self.assertIn("ok: smoke branch", result.stdout)

@@ -1,7 +1,7 @@
 ---
 name: sail
 description: Run Telltale M1 convergence in Hermes.
-version: 0.0.3
+version: 0.0.4
 author: MTGVim
 license: MIT
 platforms: [linux, macos, windows]
