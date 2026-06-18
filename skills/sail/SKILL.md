@@ -1,7 +1,7 @@
 ---
 name: sail
-description: Use when sailing toward a Telltale M1 goal.
-version: 0.0.8
+description: 출항: Run Telltale M1 convergence.
+version: 0.0.9
 author: MTGVim
 license: MIT
 ---
@@ -21,6 +21,17 @@ The namespaced plugin command remains available as:
 ```text
 /telltale:sail <task>
 ```
+
+## 자연어 트리거
+
+`/sail`은 slash command뿐 아니라 사용자가 아래처럼 말했을 때도 같은 Telltale 항해 의도로 해석한다:
+
+- `출항`
+- `출항이다`
+- `이 작업 출항하자`
+- `이거 Telltale로 항해하자`
+
+자연어 트리거가 들어오면 사용자의 나머지 문장을 destination/source material로 보고, 부족하면 목표를 먼저 확인한다.
 
 ## When to Use
 
@@ -108,7 +119,7 @@ State paths:
 사용자에게 `/sail` 진행 상황을 보고할 때는 짧은 이모지 HUD를 함께 쓴다. trace에 남는 machine-readable event name, status code, identifier는 그대로 두되, 사람이 읽는 라벨은 한글로 쓴다.
 
 ```text
-🧭 항해: 🏝️ <도착한-섬>/<전체-섬-or-?> 도착 · ⛵ 항해 중: <현재-섬|없음> · ✅ 마지막 도착: <마지막-섬|없음> · 🎯 <SUCCESS|PARTIAL|BLOCKED|ABORTED|MAX_ITERATIONS|RUNNING>
+🧭 항해: 🏝️ <도착한-섬>/<전체-섬-or-?> 도착 · ⛵ 현재 작업 섬: <현재-섬|없음> · ✅ 마지막 도착: <마지막-섬|없음> · 🎯 <SUCCESS|PARTIAL|BLOCKED|ABORTED|MAX_ITERATIONS|RUNNING>
 ```
 
 권장 이모지:
@@ -118,7 +129,7 @@ State paths:
 | 🧭 | 항해 방향 / orchestration / 다음 방향 |
 | 🗺️ | 섬 지도 / 항해 진행 섹션 |
 | 🏝️ | 섬 수 또는 도착한 섬 |
-| ⛵ | 지금 항해 중인 섬 / 현재 실행 |
+| ⛵ | 현재 작업 섬 / 현재 실행 |
 | ✅ | 섬 닫힘 또는 최종 도착 |
 | 🧪 | 검증 근거 |
 | 🚧 | 막힘 또는 사용자 입력 필요 |
@@ -128,10 +139,21 @@ State paths:
 예시:
 
 ```text
-🧭 항해: 🏝️ 0/3 도착 · ⛵ 항해 중: island-test-log · ✅ 마지막 도착: 없음 · 🎯 RUNNING
-🧭 항해: 🏝️ 1/3 도착 · ⛵ 항해 중: island-render-empty-state · ✅ 마지막 도착: island-test-log · 🎯 RUNNING
-🧭 항해: 🏝️ 3/3 도착 · ⛵ 항해 중: 없음 · ✅ 마지막 도착: island-final-verify · 🎯 SUCCESS
+🧭 항해: 🏝️ 0/3 도착 · ⛵ 현재 작업 섬: island-test-log · ✅ 마지막 도착: 없음 · 🎯 RUNNING
+🧭 항해: 🏝️ 1/3 도착 · ⛵ 현재 작업 섬: island-render-empty-state · ✅ 마지막 도착: island-test-log · 🎯 RUNNING
+🧭 항해: 🏝️ 3/3 도착 · ⛵ 현재 작업 섬: 없음 · ✅ 마지막 도착: island-final-verify · 🎯 SUCCESS
 ```
+
+## 🗺️ 지도와 브리핑 출력 계약
+
+M1 지도는 의존관계상 독립적인 병렬 후보를 표시할 수 있지만, 기본 실행 loop는 안전하게 한 번에 하나의 현재 작업 섬만 실행한다. 병렬 후보는 지도에만 표시하고, 실제 상태라인은 항상 현재 작업 섬 하나를 기준으로 쓴다.
+
+- `🗺️ 항해 지도`: 매핑 완료 시 전체 섬 수, 순서, 의존관계, 병렬 후보를 보여준다.
+- `⛵ 출항 브리핑`: 첫 섬을 시작할 때 상태라인 1줄과 현재 작업 섬의 목표/완료 조건을 2~4줄로 요약한다.
+- `✅ 섬 완료 브리핑`: 섬 하나가 검증으로 닫힐 때 상태라인 1줄과 완료 근거/다음 섬을 2~4줄로 요약한다.
+- `🏁 최종 도착 브리핑`: 전체 완료 시 상태라인 1줄과 최종 결과/검증/산출물/남은 위험을 요약한다.
+
+지도는 처음 한 번 상세히 보여주고, 이후에는 재항로 설정이나 의존관계 변경이 있을 때만 다시 보여준다. 브리핑은 길게 늘리지 말고, 사용자가 중간에 들어와도 현재 위치를 바로 알 수 있을 정도로만 쓴다.
 
 ## Pitfalls
 

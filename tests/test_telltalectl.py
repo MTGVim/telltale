@@ -140,6 +140,7 @@ class TelltaleCtlTests(unittest.TestCase):
         self.assertIn("- 🏝️ 도착한 섬 수: 1", report_text)
         self.assertIn("- ✅ 마지막 도착 섬: island-smoke", report_text)
         self.assertIn("- ⛵ 항해 상태: 완료", report_text)
+        self.assertIn("- 🧭 현재 작업 섬: island-smoke", report_text)
         self.assertIn("- 🎮 진행 HUD: 🏝️ 1개 섬 도착 · ⛵ 완료 · ✅ island-smoke", report_text)
         for english_label in [
             "Route Progress",

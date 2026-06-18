@@ -5,6 +5,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / "hermes" / "skills" / "sail" / "SKILL.md"
 CLAUDE_SKILL = ROOT / "skills" / "sail" / "SKILL.md"
+PUBLIC_COMMAND = ROOT / "commands" / "telltale-sail.md"
+LOCAL_ALIAS = ROOT / ".claude" / "commands" / "sail.md"
 
 
 def parse_frontmatter(text: str):
@@ -35,6 +37,7 @@ class HermesSkillTests(unittest.TestCase):
         frontmatter = parse_frontmatter(text)
         self.assertEqual(frontmatter["name"], "sail")
         self.assertEqual(hermes_skill_command_slug(frontmatter["name"]), "/sail")
+        self.assertIn("출항", frontmatter["description"])
         self.assertLessEqual(len(frontmatter["description"]), 60)
         self.assertTrue(frontmatter["description"].endswith("."))
 
@@ -63,8 +66,10 @@ class HermesSkillTests(unittest.TestCase):
             self.assertIn(phrase, text)
 
     def test_claude_code_local_sail_alias_exists(self):
-        alias = ROOT / ".claude" / "commands" / "sail.md"
+        alias = LOCAL_ALIAS
         text = alias.read_text(encoding="utf-8")
+        frontmatter = parse_frontmatter(text)
+        self.assertIn("출항", frontmatter["description"])
         self.assertIn("# /sail", text)
         self.assertIn("/telltale:sail", text)
         self.assertIn("$ARGUMENTS", text)
@@ -73,6 +78,7 @@ class HermesSkillTests(unittest.TestCase):
         text = CLAUDE_SKILL.read_text(encoding="utf-8")
         frontmatter = parse_frontmatter(text)
         self.assertEqual(frontmatter["name"], "sail")
+        self.assertIn("출항", frontmatter["description"])
         self.assertLessEqual(len(frontmatter["description"]), 60)
         self.assertIn("/sail <task", text)
         self.assertIn("/telltale:sail", text)
@@ -86,7 +92,7 @@ class HermesSkillTests(unittest.TestCase):
             progress_section = text.split("## 🧭 한글 항해 진행 HUD", 1)[1].split("## Pitfalls", 1)[0]
             self.assertIn("🧭 항해", progress_section)
             self.assertIn("도착", progress_section)
-            self.assertIn("항해 중", progress_section)
+            self.assertIn("현재 작업 섬", progress_section)
             self.assertIn("마지막 도착", progress_section)
             self.assertIn("🏝️", progress_section)
             self.assertIn("⛵", progress_section)
@@ -99,6 +105,24 @@ class HermesSkillTests(unittest.TestCase):
                 "Emoji Route Progress",
             ]:
                 self.assertNotIn(english_label, progress_section)
+
+    def test_natural_language_chulhang_triggers_are_on_all_entry_surfaces(self):
+        surfaces = [CLAUDE_SKILL, SKILL, PUBLIC_COMMAND, LOCAL_ALIAS]
+        for path in surfaces:
+            text = path.read_text(encoding="utf-8")
+            frontmatter = parse_frontmatter(text)
+            self.assertIn("출항", frontmatter["description"], path)
+            self.assertIn("## 자연어 트리거", text, path)
+            for trigger in ["`출항`", "`출항이다`", "`이 작업 출항하자`"]:
+                self.assertIn(trigger, text, path)
+
+    def test_m1_documents_sequential_safety_and_briefing_milestones(self):
+        for path in [CLAUDE_SKILL, SKILL, PUBLIC_COMMAND]:
+            text = path.read_text(encoding="utf-8")
+            self.assertIn("한 번에 하나의 현재 작업 섬", text, path)
+            self.assertIn("병렬 후보", text, path)
+            for milestone in ["🗺️ 항해 지도", "⛵ 출항 브리핑", "✅ 섬 완료 브리핑", "🏁 최종 도착 브리핑"]:
+                self.assertIn(milestone, text, path)
 
 
 if __name__ == "__main__":

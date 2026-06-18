@@ -85,7 +85,7 @@ Marketplace-safe 공개 Claude Code command는 하나다.
 사용자-facing 진행 상황은 아래처럼 route HUD로 짧게 표시한다.
 
 ```text
-🧭 항해: 🏝️ 2/4 도착 · ⛵ 항해 중: island-render-empty-state · ✅ 마지막 도착: island-test-log · 🎯 RUNNING
+🧭 항해: 🏝️ 2/4 도착 · ⛵ 현재 작업 섬: island-render-empty-state · ✅ 마지막 도착: island-test-log · 🎯 RUNNING
 ```
 
 ## 설치 검증
@@ -105,7 +105,7 @@ OK   public command found: /telltale:sail
 OK   local alias found: /sail
 OK   Hermes skill found: hermes/skills/sail
 OK   generated state is gitignored
-OK   versions match: 0.0.8
+OK   versions match: 0.0.9
 
 Result: healthy
 ```
