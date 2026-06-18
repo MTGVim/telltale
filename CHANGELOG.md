@@ -1,13 +1,22 @@
 # Changelog
 
+## 0.0.8
+
+### Changed
+- `/sail` 진행 HUD와 최종 convergence report의 사용자-facing 라벨을 한글 중심으로 정리했다.
+- 섬 수, 항해 상태, 현재 섬, 마지막 도착 섬, 진행 HUD가 `도착한 섬 수`, `항해 상태`, `현재 섬`, `마지막 도착 섬`, `진행 HUD`로 표시된다.
+
+### Fixed
+- smoke report와 `/sail` skill 문서에 영어 HUD 라벨이 다시 들어가지 않도록 회귀 테스트를 추가했다.
+
 ## 0.0.7
 
 ### Added
-- Emoji route progress HUD guidance for `/telltale:sail`, Claude Code `/sail`, and Hermes `/sail`.
-- Final convergence reports now include a `🗺️ Route Progress` section with reached island count, sailing status, current island, and last reached island.
+- `/telltale:sail`, Claude Code `/sail`, Hermes `/sail`에 이모지 항해 진행 HUD 가이드를 추가했다.
+- 최종 convergence report에 `🗺️ 항해 진행` 섹션을 추가해 도착한 섬 수, 항해 상태, 현재 섬, 마지막 도착 섬을 표시하게 했다.
 
 ### Fixed
-- Added regression coverage so smoke reports keep the island/sailing progress markers visible.
+- smoke report에서 섬/항해 진행 표시가 사라지지 않도록 회귀 테스트를 추가했다.
 
 ## 0.0.6
 

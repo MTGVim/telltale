@@ -1,7 +1,7 @@
 ---
 name: sail
 description: Use when sailing toward a Telltale M1 goal.
-version: 0.0.7
+version: 0.0.8
 author: MTGVim
 license: MIT
 ---
@@ -103,34 +103,34 @@ State paths:
 
 10. **Write the report.** End with one status: `SUCCESS`, `PARTIAL`, `BLOCKED`, `ABORTED`, or `MAX_ITERATIONS`.
 
-## Emoji Route Progress
+## 🧭 한글 항해 진행 HUD
 
-User-facing `/sail` progress should use a compact route HUD whenever reporting mapping, current-island execution, island close, re-chart, block, abort, or final report status. Keep machine-readable event names and status codes unchanged, but make the human progress line visually scannable:
+사용자에게 `/sail` 진행 상황을 보고할 때는 짧은 이모지 HUD를 함께 쓴다. trace에 남는 machine-readable event name, status code, identifier는 그대로 두되, 사람이 읽는 라벨은 한글로 쓴다.
 
 ```text
-🧭 Route: 🏝️ <reached>/<mapped-or-?> reached · ⛵ sailing: <current-island|none> · ✅ last island: <last-reached|none> · 🎯 <SUCCESS|PARTIAL|BLOCKED|ABORTED|MAX_ITERATIONS|RUNNING>
+🧭 항해: 🏝️ <도착한-섬>/<전체-섬-or-?> 도착 · ⛵ 항해 중: <현재-섬|없음> · ✅ 마지막 도착: <마지막-섬|없음> · 🎯 <SUCCESS|PARTIAL|BLOCKED|ABORTED|MAX_ITERATIONS|RUNNING>
 ```
 
-Recommended glyphs:
+권장 이모지:
 
-| Glyph | Meaning |
+| 이모지 | 의미 |
 |---|---|
-| 🧭 | route / orchestration / next direction |
-| 🗺️ | island map / route progress section |
-| 🏝️ | island count or reached island |
-| ⛵ | currently sailing / current island execution |
-| ✅ | island closed or final destination reached |
-| 🧪 | verification evidence |
-| 🚧 | blocked or needs input |
-| 🔁 | re-chart / retry |
-| 🛑 | abort / safety stop |
+| 🧭 | 항해 방향 / orchestration / 다음 방향 |
+| 🗺️ | 섬 지도 / 항해 진행 섹션 |
+| 🏝️ | 섬 수 또는 도착한 섬 |
+| ⛵ | 지금 항해 중인 섬 / 현재 실행 |
+| ✅ | 섬 닫힘 또는 최종 도착 |
+| 🧪 | 검증 근거 |
+| 🚧 | 막힘 또는 사용자 입력 필요 |
+| 🔁 | 재항로 설정 / 재시도 |
+| 🛑 | 중단 / safety stop |
 
-Examples:
+예시:
 
 ```text
-🧭 Route: 🏝️ 0/3 reached · ⛵ sailing: island-test-log · ✅ last island: none · 🎯 RUNNING
-🧭 Route: 🏝️ 1/3 reached · ⛵ sailing: island-render-empty-state · ✅ last island: island-test-log · 🎯 RUNNING
-🧭 Route: 🏝️ 3/3 reached · ⛵ sailing: none · ✅ last island: island-final-verify · 🎯 SUCCESS
+🧭 항해: 🏝️ 0/3 도착 · ⛵ 항해 중: island-test-log · ✅ 마지막 도착: 없음 · 🎯 RUNNING
+🧭 항해: 🏝️ 1/3 도착 · ⛵ 항해 중: island-render-empty-state · ✅ 마지막 도착: island-test-log · 🎯 RUNNING
+🧭 항해: 🏝️ 3/3 도착 · ⛵ 항해 중: 없음 · ✅ 마지막 도착: island-final-verify · 🎯 SUCCESS
 ```
 
 ## Pitfalls
