@@ -1,24 +1,12 @@
 # Telltale 한글 설명판
 
+[![Validate](https://github.com/MTGVim/telltale/actions/workflows/validate.yml/badge.svg)](https://github.com/MTGVim/telltale/actions/workflows/validate.yml)
+
 **싼 반복. 측정 가능한 수렴.**
 
-Telltale은 Claude Code 작업을 위한 cost-aware convergence orchestrator다.
+Telltale은 Claude Code 작업을 위한 cost-aware convergence orchestrator다. 긴 agentic 작업을 작은 island로 나누고, 가장 싸게 확인할 수 있는 유용한 island부터 실행한 뒤, 검증된 항로만 다음 단계로 넘긴다.
 
-Agentic coding은 목표가 모호해서만 실패하지 않는다. 작업 중에 표류하기 때문에 실패한다. 테스트가 깨지고, scope가 커지고, 기존 가정이 틀리고, 구현 후에야 새로운 gap이 드러난다.
-
-Telltale은 Claude에게 “될 때까지 계속해”라고 시키지 않는다.
-
-큰 작업을 닫을 수 있는 island로 나누고, 가장 싸게 확인할 수 있는 유용한 island부터 시도한다. 성공하면 검증된 항로가 생기고, 실패해도 다음 항해를 좁히는 증거가 남는다.
-
-```txt
-cheap probe
-→ verification
-→ residual analysis
-→ correction or next island
-→ convergence report
-```
-
-## 핵심 감각
+현재 릴리즈: `0.0.5`.
 
 ```txt
 Win small, or learn cheap.
@@ -28,76 +16,207 @@ Win small, or learn cheap.
 
 > 작게 이기거나, 싸게 배운다.
 
-Telltale은 가장 안전한 island를 고르지 않는다. 안전한지는 가봐야 알기 때문이다.
+## 언제 쓰나
 
-대신 가장 싼 유용한 island를 고른다.
+Telltale은 이런 상황에 적합하다.
 
-- 성공하면 검증된 항로가 생긴다.
-- 실패하면 다음 항해를 좁히는 증거가 남는다.
+- 작업이 길다.
+- scope drift가 생기기 쉽다.
+- 자기보고가 아니라 evidence 기반 검증이 필요하다.
+- agent가 범위를 넓히기 전에 bounded island 하나를 끝내길 원한다.
+- 실패하더라도 다음 항해를 좁히는 증거가 남아야 한다.
 
-## Greedy하지만 기억상실은 아니다
+## 언제 쓰지 않나
 
-Telltale은 greedy하다. 하지만 매 island마다 새로 시작하지 않는다.
+Telltale은 이런 상황에는 과하다.
 
-도달한 island는 검증된 항로를 남긴다.
-
-검증된 항로에는 다음이 포함된다.
-
-- 확인된 사실
-- 유지해야 할 제약
-- 이미 내린 결정
-- 통과한 검증
-- 보류/거절된 신호
-
-다음 island는 빈 prompt에서 시작하지 않는다. 이전 island가 남긴 검증된 항로 위에서 시작한다.
+- 아주 작은 one-shot 수정이다.
+- 이미 정확한 파일과 patch를 알고 있다.
+- 탐색 비용이 직접 구현보다 크다.
+- background daemon, cross-run learning, model-routing UI가 필요하다.
 
 ## `/goal`과의 차이
 
-`/goal`은 Claude를 계속 움직이게 한다.
+`/goal`은 done을 정의한다.
 
-Telltale은 Claude가 수렴하는지 측정한다.
+`/telltale:sail`은 route를 제어한다.
 
-| 구분 | `/goal` | Telltale |
-|---|---|---|
-| 핵심 | 계속 반복 | 측정하며 수렴 |
-| 목표 | 사용자가 조건 작성 | 목적지와 island map 구성 |
-| 실행 단위 | active condition | current island |
-| 실패 처리 | 조건에 직접 써야 함 | residual / re-chart / stop |
-| 증거 | transcript 중심 | event trace + convergence report |
-| 적합 | 명확한 목표 | 중간에 변수가 생기는 작업 |
+목적지 계약에는 `/goal`을 쓰고, 항로가 표류할 수 있으면 `/telltale:sail`을 쓴다.
 
-## 에이전트 구성
-
-M1은 실제 subagent 기반으로 간다.
-
-| 역할 | 책임 |
-|---|---|
-| Orchestrator | 전체 루프 제어, island 선택, event trace 기록 |
-| Cartographer | destination을 island map으로 나눔 |
-| Sailor | current island만 실행 |
-| Inspector | diff/검증 결과를 보고 residual 분석 |
-| Advisor | 모호성, 발산, 재항로 설정 시 조언 |
-
-핵심 규칙:
-
-```txt
-Sailor may be cheap.
-Inspector must be skeptical.
-Advisor is expensive and rare.
+```text
+/goal 빈 장바구니 checkout bug는 안내 상태가 보이고 테스트가 통과하면 완료다.
+/telltale:sail 현재 실패 로그에서 checkout 빈 장바구니 상태를 고치고 검증해.
 ```
 
-Telltale은 변경을 만든 agent의 자기평가를 믿지 않는다.
+## 명령어
+
+Marketplace-safe 공개 Claude Code command는 하나다.
+
+```text
+/telltale:sail <task, SOT, bug report, failing log, or goal>
+```
+
+짧은 `/sail`은 local/installed skill/Hermes-friendly alias다.
+
+| 환경 | 명령 |
+|---|---|
+| Claude Code marketplace plugin | `/telltale:sail <task>` |
+| Claude Code installed skill / local checkout alias | `/sail <task>` |
+| Hermes Agent skill command | `/sail <task>` |
+
+공개 `/telltale:converge` 명령은 없다. convergence는 내부 개념이고, 사용자-facing command는 `sail`이다.
+
+## 핵심 루프
+
+1. destination 추출
+2. candidate island map 작성
+3. evidence 기반 island scorecard 작성
+4. cheapest useful ready island 선택
+5. Sailor가 current island만 실행
+6. Inspector가 skeptical하게 검증
+7. residual signal 분류
+8. close / re-chart / block / abort / continue 결정
+9. event trace, state, report 작성
+
+생성 state는 `.claude/telltale/` 아래에 branch-local로 저장되며 gitignore 대상이다.
+
+구체적인 첫 실행 예시는 [`docs/examples/fix-failing-test.md`](docs/examples/fix-failing-test.md)를 보면 된다.
+
+## 설치 검증
+
+```bash
+python3 scripts/telltalectl.py doctor
+```
+
+정상 예시:
+
+```text
+Telltale doctor
+
+OK   plugin manifest found
+OK   marketplace manifest found
+OK   public command found: /telltale:sail
+OK   local alias found: /sail
+OK   Hermes skill found: hermes/skills/sail
+OK   generated state is gitignored
+OK   versions match: 0.0.5
+
+Result: healthy
+```
+
+전체 local validation:
+
+```bash
+npm run validate
+python3 scripts/telltalectl.py doctor
+```
+
+`npm run validate`는 `claude plugin validate . --strict`, schema validation, smoke, doctor, unit test를 실행한다.
+
+## Claude Code local development install
+
+```bash
+git clone https://github.com/MTGVim/telltale.git
+cd telltale
+claude --plugin-dir .
+```
+
+Claude Code 안에서:
+
+```text
+/telltale:sail <task>
+/sail <task>
+```
+
+## Claude Code marketplace/public install
+
+Claude Code 안에서:
+
+```text
+/plugin marketplace add MTGVim/telltale
+/plugin install telltale@telltale
+/reload-plugins
+/telltale:sail <task>
+```
+
+로컬 CLI equivalent:
+
+```bash
+claude plugin marketplace add MTGVim/telltale
+claude plugin install telltale@telltale
+```
+
+## Hermes Agent install
+
+Telltale 0.0.5는 Hermes-native skill surface를 포함한다. Hermes는 installed skill을 slash command로 노출하므로 skill name `sail`은 다음처럼 사용할 수 있다.
+
+```text
+/sail <task, SOT, bug report, failing log, or goal>
+```
+
+로컬 개발에서는:
+
+```bash
+mkdir -p "${HERMES_HOME:-$HOME/.hermes}/skills"
+ln -sfn "$(pwd)/hermes/skills/sail" "${HERMES_HOME:-$HOME/.hermes}/skills/sail"
+hermes -s sail
+```
+
+## Troubleshooting
+
+### `/plugin` command가 없다
+
+Claude Code 버전이 낮거나 plugin support가 꺼져 있을 수 있다.
+
+```bash
+claude --version
+claude update
+```
+
+### `/telltale:sail`이 안 보인다
+
+```bash
+claude plugin validate . --strict
+python3 scripts/telltalectl.py doctor
+claude --plugin-dir .
+```
+
+그 다음 Claude Code에서 `/reload-plugins` 후 slash completion을 다시 확인한다.
+
+### `/sail` alias가 안 보인다
+
+아래 surface 중 하나가 설치/로드됐는지 확인한다.
+
+```text
+skills/sail/
+.claude/commands/sail.md
+hermes/skills/sail/SKILL.md
+```
+
+### schema validation이 실패한다
+
+```bash
+python3 scripts/telltalectl.py validate-schemas
+python3 scripts/telltalectl.py doctor
+```
+
+helper는 schema를 설치된 package/repository에서 읽고, state는 현재 프로젝트에 쓴다.
+
+### 생성 state가 git에 보인다
+
+`.claude/telltale/`은 generated branch-local state이므로 추적하면 안 된다. 이 repo의 `.gitignore`는 해당 경로를 포함하고, `doctor`가 이를 확인한다.
 
 ## M1 범위
 
 포함:
 
 - `/telltale:sail`
+- `/sail` local / installed skill / Hermes alias
 - destination extraction
 - island map
 - island scorecard
 - cheapest useful island selection
-- subagents: Cartographer / Sailor / Inspector / Advisor
+- Cartographer / Sailor / Inspector / Advisor
 - current island execution
 - verification
 - residual analysis
@@ -107,11 +226,15 @@ Telltale은 변경을 만든 agent의 자기평가를 믿지 않는다.
 - re-chart on drift
 - event trace
 - convergence report
+- doctor diagnostics
+- CI validation
 
 제외:
 
 - meta-feedback
-- loop-memory
-- doctor
+- loop-memory 또는 cross-run learning
+- model-routing UI
 - worktree isolation
 - automatic rule promotion
+- background daemon
+- 새 공개 명령 `/telltale:converge`

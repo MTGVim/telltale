@@ -525,6 +525,99 @@ def sample_route(island_id: str) -> Dict[str, Any]:
     }
 
 
+
+def _doctor_ok(message: str) -> bool:
+    print(f"OK   {message}")
+    return True
+
+
+def _doctor_fail(message: str, details: Iterable[str] = ()) -> bool:
+    print(f"FAIL {message}")
+    for detail in details:
+        print(f"  {detail}")
+    return False
+
+
+def _json_version(path: Path, *keys: str) -> str:
+    data: Any = json.loads(path.read_text(encoding="utf-8"))
+    for key in keys:
+        if isinstance(data, list):
+            data = data[int(key)]
+        else:
+            data = data[key]
+    return str(data)
+
+
+def _gitignore_covers_state(repo_root: Path) -> bool:
+    gitignore = repo_root / ".gitignore"
+    if not gitignore.exists():
+        return False
+    entries = [line.strip() for line in gitignore.read_text(encoding="utf-8").splitlines()]
+    entries = [line for line in entries if line and not line.startswith("#")]
+    return any(entry.rstrip("/") in {".claude/telltale", "/.claude/telltale"} for entry in entries)
+
+
+def cmd_doctor(args: argparse.Namespace) -> None:
+    repo_root = PROJECT_ROOT
+    healthy = True
+
+    print("Telltale doctor")
+    print("")
+
+    checks: list[tuple[bool, str, str]] = [
+        ((repo_root / ".claude-plugin" / "plugin.json").exists(), "plugin manifest found", "plugin manifest missing: .claude-plugin/plugin.json"),
+        ((repo_root / ".claude-plugin" / "marketplace.json").exists(), "marketplace manifest found", "marketplace manifest missing: .claude-plugin/marketplace.json"),
+        ((repo_root / "commands" / "telltale-sail.md").exists(), "public command found: /telltale:sail", "public command missing: commands/telltale-sail.md"),
+        ((repo_root / "skills" / "sail").is_dir(), "installed/local skill found: skills/sail", "installed/local skill missing: skills/sail"),
+        ((repo_root / ".claude" / "commands" / "sail.md").exists(), "local alias found: /sail", "local alias missing: .claude/commands/sail.md"),
+        ((repo_root / "hermes" / "skills" / "sail" / "SKILL.md").exists(), "Hermes skill found: hermes/skills/sail", "Hermes skill missing: hermes/skills/sail/SKILL.md"),
+        ((repo_root / "schemas").is_dir(), "schemas directory found", "schemas directory missing: schemas"),
+    ]
+    for passed, ok_msg, fail_msg in checks:
+        healthy = (_doctor_ok(ok_msg) if passed else _doctor_fail(fail_msg)) and healthy
+
+    schema_errors: list[str] = []
+    schema_root = repo_root / "schemas"
+    for kind, filename in sorted(REQUIRED_SCHEMA_FILES.items()):
+        path = schema_root / filename
+        try:
+            schema = json.loads(path.read_text(encoding="utf-8"))
+            if schema.get("type") != "object":
+                schema_errors.append(f"{filename}: top-level schema must be object")
+            if "required" not in schema:
+                schema_errors.append(f"{filename}: missing required[] contract")
+        except FileNotFoundError:
+            schema_errors.append(f"missing {filename}")
+        except json.JSONDecodeError as exc:
+            schema_errors.append(f"{filename}: invalid JSON: {exc}")
+    healthy = (_doctor_ok(f"schema files parse: {len(REQUIRED_SCHEMA_FILES)}") if not schema_errors else _doctor_fail("schema parse failed", schema_errors)) and healthy
+
+    healthy = (_doctor_ok("generated state is gitignored") if _gitignore_covers_state(repo_root) else _doctor_fail("generated state is not gitignored", ["expected .gitignore to cover .claude/telltale/"])) and healthy
+
+    version_paths = {
+        "plugin.json": repo_root / ".claude-plugin" / "plugin.json",
+        "marketplace.json": repo_root / ".claude-plugin" / "marketplace.json",
+        "package.json": repo_root / "package.json",
+    }
+    version_details: dict[str, str] = {}
+    try:
+        version_details["plugin.json"] = _json_version(version_paths["plugin.json"], "version")
+        version_details["marketplace.json"] = _json_version(version_paths["marketplace.json"], "plugins", "0", "version")
+        version_details["package.json"] = _json_version(version_paths["package.json"], "version")
+    except Exception as exc:
+        healthy = _doctor_fail("version read failed", [str(exc)]) and healthy
+    else:
+        versions = set(version_details.values())
+        if len(versions) == 1:
+            healthy = _doctor_ok(f"versions match: {next(iter(versions))}") and healthy
+        else:
+            healthy = _doctor_fail("version mismatch", [f"{name}: {version}" for name, version in version_details.items()]) and healthy
+
+    print("")
+    print(f"Result: {'healthy' if healthy else 'unhealthy'}")
+    if not healthy:
+        raise SystemExit(1)
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Telltale M1 deterministic helper")
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -578,6 +671,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     s = sub.add_parser("smoke")
     s.set_defaults(func=cmd_smoke)
+
+    s = sub.add_parser("doctor")
+    s.set_defaults(func=cmd_doctor)
 
     return parser
 

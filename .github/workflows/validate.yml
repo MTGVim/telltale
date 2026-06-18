@@ -1,0 +1,29 @@
+name: Validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Validate schemas
+        run: python3 scripts/telltalectl.py validate-schemas
+
+      - name: Smoke helper loop
+        run: python3 scripts/telltalectl.py smoke
+
+      - name: Doctor diagnostics
+        run: python3 scripts/telltalectl.py doctor
+
+      - name: Unit tests
+        run: python3 -m unittest discover -s tests -v

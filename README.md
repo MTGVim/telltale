@@ -1,5 +1,7 @@
 # Telltale
 
+[![Validate](https://github.com/MTGVim/telltale/actions/workflows/validate.yml/badge.svg)](https://github.com/MTGVim/telltale/actions/workflows/validate.yml)
+
 ![Telltale hero](assets/telltale-hero-monochrome.png)
 
 Telltale is a Claude Code plugin for cost-aware island convergence. It helps long-running agentic work avoid drift by decomposing a destination into small evidence-scored islands, sailing to the cheapest useful ready island, verifying it skeptically, and carrying forward only verified route segments.
@@ -8,9 +10,57 @@ Telltale is a Claude Code plugin for cost-aware island convergence. It helps lon
 Win small, or learn cheap.
 ```
 
-## Project concept
+Current release: `0.0.5`.
 
-Agentic coding does not fail only because goals are unclear. It often fails because the run drifts: a useful-looking tangent expands scope, verification becomes self-report, or previous decisions get re-litigated.
+## When to use
+
+Use Telltale when:
+- the task is long-running;
+- scope drift is likely;
+- verification must be evidence-based, not self-reported;
+- you want the agent to finish one bounded island before expanding scope;
+- failed attempts should leave useful route information rather than transcript noise.
+
+## When not to use
+
+Do not use Telltale when:
+- the task is a tiny one-shot edit;
+- you already know the exact file and patch;
+- exploration cost is higher than direct implementation;
+- you need a background daemon or cross-run learning system.
+
+## `/goal` comparison
+
+`/goal` defines done.
+
+`/telltale:sail` controls the route.
+
+Use `/goal` for the destination contract. Use `/telltale:sail` when the route may drift.
+
+```text
+/goal The checkout bug is fixed when empty carts show a helpful state and tests pass.
+/telltale:sail Fix the checkout empty-cart state from the current failing test log.
+```
+
+## Commands
+
+Telltale exposes exactly one marketplace-safe public Claude Code command:
+
+```text
+/telltale:sail <task, SOT, bug report, failing log, or goal>
+```
+
+The short `/sail` skill is included for installed Claude Code plugins, local Claude Code development, and Hermes usage:
+
+| Environment | Command |
+|---|---|
+| Claude Code marketplace plugin | `/telltale:sail <task>` |
+| Claude Code installed skill / local checkout alias | `/sail <task>` |
+| Hermes Agent skill command | `/sail <task>` |
+
+There is no public `/telltale:converge` command. Convergence is the technical concept; `sail` is the user-facing command.
+
+## What Telltale does
 
 Telltale M1 keeps the loop bounded:
 
@@ -26,48 +76,7 @@ Telltale M1 keeps the loop bounded:
 
 Generated state is branch-local and lives under `.claude/telltale/`. It is intentionally gitignored.
 
-## `/goal` comparison
-
-`/goal` is a broad completion contract: it tells an agent what "done" means.
-
-`/telltale:sail` is a convergence control loop: it decides which small island is worth trying next, records the result, and carries verified route segments forward.
-
-Use them together when helpful:
-
-```text
-/goal The checkout bug is fixed when empty carts show a helpful state and tests pass.
-/telltale:sail Fix the checkout empty-cart state from the current failing test log.
-```
-
-## Public command
-
-Telltale exposes exactly one public command:
-
-```text
-/telltale:sail <task, SOT, bug report, failing log, or goal>
-```
-
-There is no public `/telltale:converge` command. Convergence is the technical concept; `sail` is the user-facing command.
-
-## Command matrix
-
-| Environment | Command |
-|---|---|
-| Claude Code marketplace plugin | `/telltale:sail <task>` |
-| Claude Code installed skill / local checkout alias | `/sail <task>` |
-| Hermes Agent skill command | `/sail <task>` |
-
-The short `/sail` skill is included for installed Claude Code plugins, local Claude Code development, and Hermes usage so typing `/sail` appears naturally in slash-command completion. The marketplace-safe Claude Code command remains namespaced as `/telltale:sail`.
-
-## Usage
-
-Inside Claude Code after loading or installing the plugin:
-
-```text
-/telltale:sail Fix the search empty state bug and verify it.
-```
-
-Telltale will guide Claude through Cartographer, Sailor, Inspector, and rare Advisor phases. The orchestrator remains responsible for decisions and event recording.
+For a concrete miniature run, see [`docs/examples/fix-failing-test.md`](docs/examples/fix-failing-test.md).
 
 ## Claude Code local development install
 
@@ -77,7 +86,7 @@ cd telltale
 claude --plugin-dir .
 ```
 
-Then run inside Claude Code. The canonical plugin command is namespaced, and the local checkout also provides the short alias:
+Then run inside Claude Code:
 
 ```text
 /telltale:sail <task>
@@ -87,11 +96,11 @@ Then run inside Claude Code. The canonical plugin command is namespaced, and the
 Local validation:
 
 ```bash
-claude plugin validate . --strict
-python3 scripts/telltalectl.py validate-schemas
-python3 scripts/telltalectl.py smoke
-python3 -m unittest discover -s tests -v
+npm run validate
+python3 scripts/telltalectl.py doctor
 ```
+
+`npm run validate` includes `claude plugin validate . --strict`, schema validation, smoke validation, doctor diagnostics, and unit tests.
 
 ## Claude Code marketplace/public install
 
@@ -113,16 +122,15 @@ claude plugin marketplace add MTGVim/telltale
 claude plugin install telltale@telltale
 ```
 
-This was verified against Claude Code 2.1.150 in an isolated HOME. A plain Git URL also works for adding the marketplace:
+A plain Git URL also works for adding the marketplace:
 
 ```text
 /plugin marketplace add https://github.com/MTGVim/telltale.git
 ```
 
-
 ## Hermes Agent install
 
-Telltale 0.0.4 adds a Hermes-native skill surface. Hermes automatically exposes installed skills as slash commands, so the skill name `sail` becomes:
+Telltale 0.0.5 includes a Hermes-native skill surface. Hermes automatically exposes installed skills as slash commands, so the skill name `sail` becomes:
 
 ```text
 /sail <task, SOT, bug report, failing log, or goal>
@@ -150,6 +158,30 @@ Then use:
 
 This is native Hermes skill-command support, not a Hermes core slash-command patch. The same short `/sail` spelling is also available as a Claude Code local checkout alias; the Claude Code marketplace command remains `/telltale:sail`.
 
+## Verify installation
+
+Run:
+
+```bash
+python3 scripts/telltalectl.py doctor
+```
+
+Healthy output looks like:
+
+```text
+Telltale doctor
+
+OK   plugin manifest found
+OK   marketplace manifest found
+OK   public command found: /telltale:sail
+OK   local alias found: /sail
+OK   Hermes skill found: hermes/skills/sail
+OK   generated state is gitignored
+OK   versions match: 0.0.5
+
+Result: healthy
+```
+
 ## Troubleshooting
 
 ### Claude Code version too old
@@ -161,7 +193,7 @@ claude --version
 claude update
 ```
 
-Telltale 0.0.4 was validated with Claude Code 2.1.150 and Hermes skill discovery from the repository checkout.
+Telltale 0.0.5 was validated with Claude Code 2.1.150 and Hermes skill discovery from the repository checkout.
 
 ### `/plugin` command missing
 
@@ -173,14 +205,38 @@ Check:
 
 ```bash
 claude plugin validate . --strict
+python3 scripts/telltalectl.py doctor
 claude --plugin-dir .
 ```
 
 Then run `/reload-plugins` in Claude Code and check `/help` or slash-command completion for `/telltale:sail`.
 
+### `/sail` alias not visible
+
+Check that one of these surfaces is installed or loaded:
+
+```text
+skills/sail/
+.claude/commands/sail.md
+hermes/skills/sail/SKILL.md
+```
+
+Then reload the host session.
+
+### Schema validation failure
+
+Run:
+
+```bash
+python3 scripts/telltalectl.py validate-schemas
+python3 scripts/telltalectl.py doctor
+```
+
+The helper resolves schemas from the installed package/repository and writes state under the current project.
+
 ### Generated state appears in git
 
-`.claude/telltale/` is generated branch-local state and should stay untracked. This repo includes it in `.gitignore`.
+`.claude/telltale/` is generated branch-local state and should stay untracked. This repo includes it in `.gitignore`; `doctor` checks this coverage.
 
 ### GitHub marketplace not refreshed
 
@@ -195,7 +251,7 @@ If needed, remove and re-add the marketplace source.
 
 ## M1 scope
 
-Included in 0.0.4:
+Included in 0.0.5:
 
 - Claude Code plugin manifest;
 - `/telltale:sail` command and installed Claude Code `/sail` skill;
@@ -203,14 +259,15 @@ Included in 0.0.4:
 - internal phase docs;
 - JSON schemas for destination, island, island scorecard, event, route, report, and state;
 - deterministic `scripts/telltalectl.py` helper;
-- schema, event trace, state, report, and smoke validation;
-- hero image and public README;
+- schema, event trace, state, report, smoke, doctor, and unit validation;
+- CI validation workflow;
+- example-driven first-run documentation;
 - Hermes Agent skill command support via `hermes/skills/sail` and `/sail`;
 - Claude Code installed-plugin skill via `skills/sail` and local checkout alias via `.claude/commands/sail.md`, both exposing `/sail`.
 
 ## Non-goals
 
-Telltale 0.0.4 does not implement:
+Telltale 0.0.5 does not implement:
 
 - meta-feedback;
 - loop-memory or cross-run learning;
@@ -218,27 +275,31 @@ Telltale 0.0.4 does not implement:
 - worktree isolation;
 - automatic rule promotion;
 - background daemons;
-- doctor diagnostics.
+- new public command `/telltale:converge`.
 
 ## Repository layout
 
 ```text
 .claude-plugin/plugin.json       # Claude Code plugin manifest
 .claude-plugin/marketplace.json  # repo-local marketplace manifest
+.github/workflows/validate.yml   # GitHub Actions validation
 commands/telltale-sail.md        # public /telltale:sail command
 skills/sail/                     # installed Claude Code /sail skill
 .claude/commands/sail.md         # Claude Code local /sail alias
 agents/                          # Telltale subagents
 internal/                        # M1 phase docs
 schemas/                         # JSON schemas
-scripts/telltalectl.py           # deterministic helper
+scripts/telltalectl.py           # deterministic helper + doctor
 assets/telltale-hero-monochrome.png
-README.md
-README.ko.md
+CHANGELOG.md
 docs/
 hermes/skills/sail/              # Hermes /sail skill support
 tests/
 ```
+
+## Release
+
+See [`CHANGELOG.md`](CHANGELOG.md) and [`docs/release-checklist.md`](docs/release-checklist.md).
 
 ## License
 
