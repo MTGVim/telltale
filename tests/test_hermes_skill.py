@@ -41,6 +41,11 @@ class HermesSkillTests(unittest.TestCase):
         self.assertLessEqual(len(frontmatter["description"]), 60)
         self.assertTrue(frontmatter["description"].endswith("."))
 
+    def test_hermes_skill_has_no_platform_limiter_for_webui_loading(self):
+        text = SKILL.read_text(encoding="utf-8")
+        frontmatter = parse_frontmatter(text)
+        self.assertNotIn("platforms", frontmatter)
+
     def test_skill_ships_helper_and_references(self):
         skill_dir = SKILL.parent
         required = [

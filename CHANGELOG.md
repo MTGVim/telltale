@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.10
+
+### Fixed
+- Hermes WebUI에서 `sail` skill이 unsupported로 막히지 않도록 Hermes skill frontmatter의 top-level `platforms` limiter를 제거했다.
+- Hermes skill 설치 표면이 WebUI/CLI/gateway 공통으로 로드 가능한지 regression test를 추가했다.
+
 ## 0.0.9
 
 ### Changed

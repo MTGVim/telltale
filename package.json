@@ -1,6 +1,6 @@
 {
   "name": "telltale",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "private": false,
   "description": "출항: cost-aware island convergence for Claude Code work.",
   "license": "MIT",
