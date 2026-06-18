@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Telltale Event",
+  "type": "object",
+  "required": [
+    "event",
+    "run_id",
+    "ts"
+  ],
+  "properties": {
+    "event": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "ts": {
+      "type": "string"
+    },
+    "island_id": {
+      "type": "string"
+    },
+    "payload": {
+      "type": "object"
+    }
+  }
+}

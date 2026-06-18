@@ -6,7 +6,7 @@
 
 Telltale은 Claude Code 작업을 위한 cost-aware convergence orchestrator다. 긴 agentic 작업을 작은 island로 나누고, 가장 싸게 확인할 수 있는 유용한 island부터 실행한 뒤, 검증된 항로만 다음 단계로 넘긴다.
 
-현재 릴리즈: `0.0.5`.
+현재 릴리즈: `0.0.6`.
 
 ```txt
 Win small, or learn cheap.
@@ -99,7 +99,7 @@ OK   public command found: /telltale:sail
 OK   local alias found: /sail
 OK   Hermes skill found: hermes/skills/sail
 OK   generated state is gitignored
-OK   versions match: 0.0.5
+OK   versions match: 0.0.6
 
 Result: healthy
 ```
@@ -148,7 +148,7 @@ claude plugin install telltale@telltale
 
 ## Hermes Agent install
 
-Telltale 0.0.5는 Hermes-native skill surface를 포함한다. Hermes는 installed skill을 slash command로 노출하므로 skill name `sail`은 다음처럼 사용할 수 있다.
+Telltale 0.0.6는 Hermes-native skill surface를 포함한다. Hermes는 installed skill을 slash command로 노출하므로 skill name `sail`은 다음처럼 사용할 수 있다.
 
 ```text
 /sail <task, SOT, bug report, failing log, or goal>
@@ -201,6 +201,7 @@ python3 scripts/telltalectl.py doctor
 ```
 
 helper는 schema를 설치된 package/repository에서 읽고, state는 현재 프로젝트에 쓴다.
+현재 프로젝트에 `schemas/`를 만들거나 요구하면 안 된다. 유저 repo에 생성되는 것은 `.claude/telltale/` state뿐이어야 한다.
 
 ### 생성 state가 git에 보인다
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.6
+
+### Fixed
+- Bundled JSON schemas with the Claude Code `/sail` skill and Hermes `/sail` skill surfaces so helpers do not require or encourage `schemas/` inside user repositories.
+- Added a regression test proving all helper entrypoints run from an external project without creating `<project>/schemas`.
+
 ## 0.0.5
 
 ### Added

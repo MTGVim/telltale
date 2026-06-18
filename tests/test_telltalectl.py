@@ -1,4 +1,5 @@
 import json
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -95,6 +96,33 @@ class TelltaleCtlTests(unittest.TestCase):
             result = self.run_ctl("branch-key", cwd=project)
 
             self.assertEqual(result.stdout.strip(), "consumer-branch")
+
+    def test_all_helper_entrypoints_use_bundled_schemas_without_project_schemas(self):
+        scripts = [
+            ROOT / "scripts" / "telltalectl.py",
+            ROOT / "skills" / "sail" / "scripts" / "telltalectl.py",
+            ROOT / "hermes" / "skills" / "sail" / "scripts" / "telltalectl.py",
+        ]
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp) / "consumer-project"
+            project.mkdir()
+            subprocess.run(["git", "init", "-b", "consumer-branch"], cwd=project, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+            for script in scripts:
+                with self.subTest(script=script):
+                    shutil.rmtree(project / ".claude", ignore_errors=True)
+                    result = subprocess.run(
+                        ["python3", str(script), "init-run", "--input-source", "user_prompt"],
+                        cwd=project,
+                        text=True,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                    )
+
+                    self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+                    self.assertFalse((project / "schemas").exists(), "helper must not create schemas/ in the user project")
+                    trace = project / ".claude" / "telltale" / "branches" / "consumer-branch" / "event-trace.jsonl"
+                    self.assertTrue(trace.exists())
 
     def test_smoke_creates_closed_trace_and_report(self):
         result = self.run_ctl("smoke")

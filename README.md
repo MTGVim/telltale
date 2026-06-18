@@ -10,7 +10,7 @@ Telltale is a Claude Code plugin for cost-aware island convergence. It helps lon
 Win small, or learn cheap.
 ```
 
-Current release: `0.0.5`.
+Current release: `0.0.6`.
 
 ## When to use
 
@@ -130,7 +130,7 @@ A plain Git URL also works for adding the marketplace:
 
 ## Hermes Agent install
 
-Telltale 0.0.5 includes a Hermes-native skill surface. Hermes automatically exposes installed skills as slash commands, so the skill name `sail` becomes:
+Telltale 0.0.6 includes a Hermes-native skill surface. Hermes automatically exposes installed skills as slash commands, so the skill name `sail` becomes:
 
 ```text
 /sail <task, SOT, bug report, failing log, or goal>
@@ -177,7 +177,7 @@ OK   public command found: /telltale:sail
 OK   local alias found: /sail
 OK   Hermes skill found: hermes/skills/sail
 OK   generated state is gitignored
-OK   versions match: 0.0.5
+OK   versions match: 0.0.6
 
 Result: healthy
 ```
@@ -193,7 +193,7 @@ claude --version
 claude update
 ```
 
-Telltale 0.0.5 was validated with Claude Code 2.1.150 and Hermes skill discovery from the repository checkout.
+Telltale 0.0.6 was validated with Claude Code 2.1.150 and Hermes skill discovery from the repository checkout.
 
 ### `/plugin` command missing
 
@@ -233,6 +233,7 @@ python3 scripts/telltalectl.py doctor
 ```
 
 The helper resolves schemas from the installed package/repository and writes state under the current project.
+It should not create or require `schemas/` inside your project; generated user-project state belongs under `.claude/telltale/` only.
 
 ### Generated state appears in git
 
@@ -251,7 +252,7 @@ If needed, remove and re-add the marketplace source.
 
 ## M1 scope
 
-Included in 0.0.5:
+Included in 0.0.6:
 
 - Claude Code plugin manifest;
 - `/telltale:sail` command and installed Claude Code `/sail` skill;
@@ -267,7 +268,7 @@ Included in 0.0.5:
 
 ## Non-goals
 
-Telltale 0.0.5 does not implement:
+Telltale 0.0.6 does not implement:
 
 - meta-feedback;
 - loop-memory or cross-run learning;
