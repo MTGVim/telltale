@@ -436,7 +436,7 @@ def cmd_write_report(args: argparse.Namespace) -> None:
         "## 🗺️ 항해 진행",
         f"- 🏝️ 도착한 섬 수: {reached_count}",
         f"- ⛵ 항해 상태: {sailing_status}",
-        f"- 🧭 현재 섬: {current_island}",
+        f"- 🧭 현재 작업 섬: {current_island}",
         f"- ✅ 마지막 도착 섬: {last_reached}",
         f"- 🎮 진행 HUD: 🏝️ {reached_count}개 섬 도착 · ⛵ {sailing_status} · ✅ {last_reached}",
         "",

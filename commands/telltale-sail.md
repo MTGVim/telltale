@@ -1,6 +1,6 @@
 ---
 name: telltale:sail
-description: Run Telltale's cost-aware island convergence loop.
+description: 출항: run Telltale cost-aware island convergence.
 argument-hint: "<task, SOT, bug report, failing log, or goal>"
 ---
 
@@ -9,6 +9,17 @@ argument-hint: "<task, SOT, bug report, failing log, or goal>"
 You are the Telltale Orchestrator. Run the M1 cost-aware greedy island convergence loop for the user's requested work.
 
 The public command is `/telltale:sail`. Do not expose or redirect users to `/telltale:converge`; convergence is the internal concept, sail is the user-facing command.
+
+## 자연어 트리거
+
+`/telltale:sail`은 slash command뿐 아니라 아래 자연어 요청도 같은 항해 의도로 취급한다:
+
+- `출항`
+- `출항이다`
+- `이 작업 출항하자`
+- `이거 Telltale로 항해하자`
+
+자연어 트리거가 들어오면 사용자 발화의 나머지 내용을 destination/source material로 보고, 비어 있으면 destination을 먼저 물어본다.
 
 ## Inputs
 
@@ -63,7 +74,7 @@ The event trace is the source of truth. `state.json` is derived from the event t
 4. Append one `island_scored` event per island.
 5. Select the current island using `internal/island-selection.md`.
 6. Append `island_selected` and `island_started`.
-7. Ask Sailor to execute the current island only.
+7. Ask Sailor to execute the current island only. M1 may show 병렬 후보 in the map, but the execution loop runs 한 번에 하나의 현재 작업 섬 for safety.
 8. Append `sailor_result`.
 9. Ask Inspector to verify and inspect residuals.
 10. Append `verification_result`, `inspector_residual`, and `signal_classified` events.
@@ -78,10 +89,19 @@ The event trace is the source of truth. `state.json` is derived from the event t
 사용자에게 진행 상황을 보고할 때는 짧은 이모지 항해 HUD를 포함한다. trace의 event name과 status code는 그대로 유지하되, 사람이 읽는 라벨은 한글로 쓴다.
 
 ```text
-🧭 항해: 🏝️ <도착한-섬>/<전체-섬-or-?> 도착 · ⛵ 항해 중: <현재-섬|없음> · ✅ 마지막 도착: <마지막-섬|없음> · 🎯 <status>
+🧭 항해: 🏝️ <도착한-섬>/<전체-섬-or-?> 도착 · ⛵ 현재 작업 섬: <현재-섬|없음> · ✅ 마지막 도착: <마지막-섬|없음> · 🎯 <status>
 ```
 
-지도 작성 후, 섬 시작, 섬 닫힘, 재항로 설정, 최종 보고 요약에 이 HUD를 사용한다.
+## 🗺️ 지도와 브리핑 출력 계약
+
+M1 지도는 의존관계상 독립적인 병렬 후보를 표시할 수 있지만, 기본 실행 loop는 안전하게 한 번에 하나의 현재 작업 섬만 실행한다. 병렬 후보는 지도에만 표시하고, 실제 상태라인은 항상 현재 작업 섬 하나를 기준으로 쓴다.
+
+- `🗺️ 항해 지도`: 매핑 완료 시 전체 섬 수, 순서, 의존관계, 병렬 후보를 보여준다.
+- `⛵ 출항 브리핑`: 첫 섬을 시작할 때 상태라인 1줄과 현재 작업 섬의 목표/완료 조건을 2~4줄로 요약한다.
+- `✅ 섬 완료 브리핑`: 섬 하나가 검증으로 닫힐 때 상태라인 1줄과 완료 근거/다음 섬을 2~4줄로 요약한다.
+- `🏁 최종 도착 브리핑`: 전체 완료 시 상태라인 1줄과 최종 결과/검증/산출물/남은 위험을 요약한다.
+
+지도는 처음 한 번 상세히 보여주고, 이후에는 재항로 설정이나 의존관계 변경이 있을 때만 다시 보여준다.
 
 ## Budgets
 

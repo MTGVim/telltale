@@ -1,5 +1,5 @@
 ---
-description: Alias for Telltale's cost-aware island convergence loop.
+description: 출항: alias for Telltale island convergence.
 argument-hint: "<task, SOT, bug report, failing log, or goal>"
 ---
 
@@ -8,6 +8,16 @@ argument-hint: "<task, SOT, bug report, failing log, or goal>"
 This is the repo-local Claude Code short alias for Telltale.
 
 Run the same M1 behavior as the plugin command `/telltale:sail`:
+
+## 자연어 트리거
+
+이 repo-local alias는 아래 자연어 요청도 `/sail` 의도로 안내한다:
+
+- `출항`
+- `출항이다`
+- `이 작업 출항하자`
+- `이거 Telltale로 항해하자`
+
 
 - extract the Destination;
 - map evidence-backed Islands;

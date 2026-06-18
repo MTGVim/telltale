@@ -1,8 +1,8 @@
 {
   "name": "telltale",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "private": false,
-  "description": "Cost-aware island convergence for Claude Code work.",
+  "description": "출항: cost-aware island convergence for Claude Code work.",
   "license": "MIT",
   "repository": {
     "type": "git",
