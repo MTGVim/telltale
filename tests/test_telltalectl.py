@@ -135,6 +135,11 @@ class TelltaleCtlTests(unittest.TestCase):
         self.assertTrue(report.exists())
         state_json = json.loads(state.read_text())
         self.assertEqual(state_json["status"], "SUCCESS")
+        report_text = report.read_text(encoding="utf-8")
+        self.assertIn("## 🗺️ Route Progress", report_text)
+        self.assertIn("- 🏝️ Islands reached: 1", report_text)
+        self.assertIn("- ✅ Last island reached: island-smoke", report_text)
+        self.assertIn("- ⛵ Sailing status: completed", report_text)
         closed = self.run_ctl("validate-trace", "--file", str(trace), "--require-close")
         self.assertIn("ok:", closed.stdout)
 

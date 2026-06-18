@@ -6,7 +6,7 @@
 
 Telltale은 Claude Code 작업을 위한 cost-aware convergence orchestrator다. 긴 agentic 작업을 작은 island로 나누고, 가장 싸게 확인할 수 있는 유용한 island부터 실행한 뒤, 검증된 항로만 다음 단계로 넘긴다.
 
-현재 릴리즈: `0.0.6`.
+현재 릴리즈: `0.0.7`.
 
 ```txt
 Win small, or learn cheap.
@@ -82,6 +82,12 @@ Marketplace-safe 공개 Claude Code command는 하나다.
 
 구체적인 첫 실행 예시는 [`docs/examples/fix-failing-test.md`](docs/examples/fix-failing-test.md)를 보면 된다.
 
+사용자-facing 진행 상황은 아래처럼 route HUD로 짧게 표시한다.
+
+```text
+🧭 Route: 🏝️ 2/4 reached · ⛵ sailing: island-render-empty-state · ✅ last island: island-test-log · 🎯 RUNNING
+```
+
 ## 설치 검증
 
 ```bash
@@ -99,7 +105,7 @@ OK   public command found: /telltale:sail
 OK   local alias found: /sail
 OK   Hermes skill found: hermes/skills/sail
 OK   generated state is gitignored
-OK   versions match: 0.0.6
+OK   versions match: 0.0.7
 
 Result: healthy
 ```
@@ -148,7 +154,7 @@ claude plugin install telltale@telltale
 
 ## Hermes Agent install
 
-Telltale 0.0.6는 Hermes-native skill surface를 포함한다. Hermes는 installed skill을 slash command로 노출하므로 skill name `sail`은 다음처럼 사용할 수 있다.
+Telltale 0.0.7는 Hermes-native skill surface를 포함한다. Hermes는 installed skill을 slash command로 노출하므로 skill name `sail`은 다음처럼 사용할 수 있다.
 
 ```text
 /sail <task, SOT, bug report, failing log, or goal>

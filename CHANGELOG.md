@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.0.7
+
+### Added
+- Emoji route progress HUD guidance for `/telltale:sail`, Claude Code `/sail`, and Hermes `/sail`.
+- Final convergence reports now include a `🗺️ Route Progress` section with reached island count, sailing status, current island, and last reached island.
+
+### Fixed
+- Added regression coverage so smoke reports keep the island/sailing progress markers visible.
+
 ## 0.0.6
 
 ### Fixed

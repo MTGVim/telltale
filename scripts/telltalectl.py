@@ -410,13 +410,34 @@ def cmd_write_report(args: argparse.Namespace) -> None:
     }
     validate_schema_object(report, load_schema("report"))
     (report_dir / "convergence-report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    reached_islands = report["reached_islands"]
+    reached_count = len(reached_islands)
+    last_reached = reached_islands[-1] if reached_islands else "none"
+    current_island = state.get("current_island") or "none"
+    if args.result == "SUCCESS":
+        sailing_status = "completed"
+    elif args.result == "PARTIAL":
+        sailing_status = "partial"
+    elif args.result == "BLOCKED":
+        sailing_status = "blocked"
+    elif args.result == "ABORTED":
+        sailing_status = "aborted"
+    else:
+        sailing_status = "max-iterations"
     markdown = [
-        "# Telltale Convergence Report",
+        "# 🧭 Telltale Convergence Report",
         "",
-        f"- Result: {args.result}",
-        f"- Destination: {destination}",
-        f"- Reached islands: {', '.join(report['reached_islands']) if report['reached_islands'] else 'none'}",
-        f"- Next recommended island: {args.next_recommended_island or 'none'}",
+        f"- 🟢 Result: {args.result}",
+        f"- 🎯 Destination: {destination}",
+        f"- 🏝️ Reached islands: {', '.join(reached_islands) if reached_islands else 'none'}",
+        f"- 🧭 Next recommended island: {args.next_recommended_island or 'none'}",
+        "",
+        "## 🗺️ Route Progress",
+        f"- 🏝️ Islands reached: {reached_count}",
+        f"- ⛵ Sailing status: {sailing_status}",
+        f"- 🧭 Current island: {current_island}",
+        f"- ✅ Last island reached: {last_reached}",
+        f"- 🎮 Progress HUD: 🏝️ {reached_count} reached · ⛵ {sailing_status} · ✅ {last_reached}",
         "",
         "## Summary",
         args.summary or "No summary provided.",
