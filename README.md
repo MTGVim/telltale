@@ -54,10 +54,10 @@ There is no public `/telltale:converge` command. Convergence is the technical co
 | Environment | Command |
 |---|---|
 | Claude Code marketplace plugin | `/telltale:sail <task>` |
-| Claude Code local checkout alias | `/sail <task>` |
+| Claude Code installed skill / local checkout alias | `/sail <task>` |
 | Hermes Agent skill command | `/sail <task>` |
 
-The short `/sail` alias is included for local Claude Code development and Hermes usage so typing `/sail` appears naturally in slash-command completion. The marketplace-safe Claude Code command remains namespaced as `/telltale:sail`.
+The short `/sail` skill is included for installed Claude Code plugins, local Claude Code development, and Hermes usage so typing `/sail` appears naturally in slash-command completion. The marketplace-safe Claude Code command remains namespaced as `/telltale:sail`.
 
 ## Usage
 
@@ -122,7 +122,7 @@ This was verified against Claude Code 2.1.150 in an isolated HOME. A plain Git U
 
 ## Hermes Agent install
 
-Telltale 0.0.2 adds a Hermes-native skill surface. Hermes automatically exposes installed skills as slash commands, so the skill name `sail` becomes:
+Telltale 0.0.3 adds a Hermes-native skill surface. Hermes automatically exposes installed skills as slash commands, so the skill name `sail` becomes:
 
 ```text
 /sail <task, SOT, bug report, failing log, or goal>
@@ -161,7 +161,7 @@ claude --version
 claude update
 ```
 
-Telltale 0.0.2 was validated with Claude Code 2.1.150 and Hermes skill discovery from the repository checkout.
+Telltale 0.0.3 was validated with Claude Code 2.1.150 and Hermes skill discovery from the repository checkout.
 
 ### `/plugin` command missing
 
@@ -195,10 +195,10 @@ If needed, remove and re-add the marketplace source.
 
 ## M1 scope
 
-Included in 0.0.2:
+Included in 0.0.3:
 
 - Claude Code plugin manifest;
-- `/telltale:sail` command;
+- `/telltale:sail` command and installed Claude Code `/sail` skill;
 - Cartographer, Sailor, Inspector, and Advisor subagents;
 - internal phase docs;
 - JSON schemas for destination, island, island scorecard, event, route, report, and state;
@@ -206,11 +206,11 @@ Included in 0.0.2:
 - schema, event trace, state, report, and smoke validation;
 - hero image and public README;
 - Hermes Agent skill command support via `hermes/skills/sail` and `/sail`;
-- Claude Code local checkout alias via `.claude/commands/sail.md` and `/sail`.
+- Claude Code installed-plugin skill via `skills/sail` and local checkout alias via `.claude/commands/sail.md`, both exposing `/sail`.
 
 ## Non-goals
 
-Telltale 0.0.2 does not implement:
+Telltale 0.0.3 does not implement:
 
 - meta-feedback;
 - loop-memory or cross-run learning;
@@ -225,7 +225,8 @@ Telltale 0.0.2 does not implement:
 ```text
 .claude-plugin/plugin.json       # Claude Code plugin manifest
 .claude-plugin/marketplace.json  # repo-local marketplace manifest
-commands/sail.md                 # public /telltale:sail command
+commands/telltale-sail.md        # public /telltale:sail command
+skills/sail/                     # installed Claude Code /sail skill
 .claude/commands/sail.md         # Claude Code local /sail alias
 agents/                          # Telltale subagents
 internal/                        # M1 phase docs

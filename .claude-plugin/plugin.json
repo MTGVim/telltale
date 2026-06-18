@@ -1,7 +1,7 @@
 {
   "name": "telltale",
   "description": "Cost-aware island convergence for Claude Code work.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": {
     "name": "MTGVim"
   },
@@ -16,6 +16,6 @@
     "workflow"
   ],
   "commands": [
-    "./commands/sail.md"
+    "./commands/telltale-sail.md"
   ]
 }

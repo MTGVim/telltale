@@ -81,7 +81,7 @@ Generated state:
 Command source:
 
 ```txt
-commands/sail.md
+commands/telltale-sail.md
 .claude-plugin/plugin.json
 ```
 
@@ -90,7 +90,7 @@ M1 manifest:
 ```json
 {
   "commands": [
-    "./commands/sail.md"
+    "./commands/telltale-sail.md"
   ]
 }
 ```
