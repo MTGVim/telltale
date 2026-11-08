@@ -1,5 +1,13 @@
 # Telltale
 
+## 개발 중단 · Archived (2026-11-08)
+
+Telltale의 독립 플러그인 개발과 유지보수를 중단합니다. 저장소와 기존 릴리스는 참고용으로 보존하며, 아래 설치·사용 안내는 과거 버전의 문서입니다.
+
+배경은 [독립 플러그인 중단 제안 #17](https://github.com/MTGVim/telltale/issues/17)을 참고하세요. 현재 유지보수하는 에이전트 스킬은 [TigerKit](https://github.com/MTGVim/tiger-kit)에서 확인할 수 있습니다. 이 안내는 이슈에 제안된 모든 기능의 이전 완료를 뜻하지 않습니다.
+
+🤖 본 안내는 AI가 작성했습니다.
+
 [![Validate](https://github.com/MTGVim/telltale/actions/workflows/validate.yml/badge.svg)](https://github.com/MTGVim/telltale/actions/workflows/validate.yml)
 
 ![Telltale hero](assets/telltale-hero-monochrome.png)
